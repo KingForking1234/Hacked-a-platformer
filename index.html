@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+    <title>hacked</title>
+        <style>
+            * {
+                font-family: sans-serif;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id = "canvas" width = "400" height = "400" tabindex = "0"></canvas>
+        <script type>
+console.clear();
+var canvas = document.getElementById("canvas"),
+    ctx = canvas.getContext("2d"),
+    
+    scene = "menu",
+    
+    levels = [
+        /**
+         * ^, >, <, v are spikes
+         * # is a block
+         * @ is the player spawn point location
+         * p is the portal
+        **/
+        {
+            bitmap: [
+                "#                                     #",
+                "#                                     #",
+                "#                                     #",
+                "#                                     #",
+                "#                                     #",
+                "#                                     #",
+                "#                                     #",
+                "#                                     #",
+                "#                                     #",
+                "#@               ^                   p#",
+                "#######################################",
+            ],
+            messages: [
+                {
+                    x: 50,
+                    y: 167,
+                    txt: "Use the arrow\nkeys to move"
+                },
+                {
+                    x: 309,
+                    y: 120,
+                    txt: "This is\na spike\ndon\"touch\nit"
+                },
+                {
+                    x: 619,
+                    y: 93,
+                    txt: "This is a error\nif you touch it\nyou will go to\nthe next level"
+                }
+            ]
+        },
+        {
+            bitmap: [
+                "#                               <#",
+                "#                               <#",
+                "#                               <#",
+                "#                               <#",
+                "#                               <#",
+                "#                               <#",
+                "#                               <#",
+                "#                               <#",
+                "#                               <##########",
+                "#@                                       p#",
+                "#############                 #############",
+                "            #^^^^^^^^^^^^^^^^^#",
+                "            ###################"
+            ],
+            messages: [
+                {
+                    x: 50,
+                    y: 151,
+                    txt: "If you hold a key, you\nwill get faster"
+                },
+                {
+                    x: 482,
+                    y: 161,
+                    txt: "Sometimes too fast"
+                }
+            ]
+        },
+        {
+            bitmap: [
+                "#           #",
+                "#           #",
+                "#           #",
+                "#           #",
+                "#           #",
+                "#@         p#",
+                "#############",
+            ],
+            messages: [
+                {
+                    x: 21,
+                    y: 53,
+                    txt: "That\'s the end of the\ntutorial. Good luck!"
+                },
+            ]
+        },
+        {
+            bitmap: [
+                "###################################",
+                "#                                 #",
+                "#                                 #",
+    			"#   #                         #   #",
+    			"#   ###                     ###   #",
+    			"#   #                         #   #",
+    			"#  ##                         ##  #",
+    			"#   #                         #   #",
+    			"#   #                         #   #",
+    			"#   #   ###################   #   #",
+    			"#   #                         #   #",
+    			"##  #                         #  ##",
+    			"#   ##                       ##   #",
+    			"#   #                         #   #",
+    			"#   #   #                 #   #   #",
+    			"#   #   #                 #   #   #",
+    			"#  ##   #  #           #  #   ##  #",
+    			"#   #   #  #  #     #  #  #   #   #",
+    			"#   #   #  #  #  p  #  #  #   #   #",
+    			"#   #^^^#^^#^^#^^#^^#^^#^^#^^^#   #",
+    			"#   ###########################   #",
+                "##                               ##",
+                "#                @                #",
+                "###################################",
+            ],
+            messages: [
+                {
+                    x: 293,
+                    y: 136,
+                    txt: "I know right?\nFancy stuff."
+                }
+            ]
+        },
+        {
+            bitmap: [
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#        #                         #",
+    			"##      ##  #            #         #",
+    			"#       #       #                  #",
+    			"#       #                      #   #",
+    			"#       #                          #",
+    			"#      ##^^^^^^^^^^^^^^^^^^^^^^^^# #",
+    			"#       ########################## #",
+    			"#       #                          #",
+    			"#       #                          #",
+    			"##      #                          #",
+    			"#       #                          #",
+    			"#       #                          #",
+    			"#       #                          #",
+    			"#      ##                          #",
+    			"#       #                          #",
+    			"#       #                          #",
+    			"#       #         #    #           #",
+    			"##      #                   #      #",
+    			"#       #    #                    ##",
+    			"#       #                          #",
+    			"#       #                          #",
+    			"#      ## #^^^^^^^^^^^^^^^^^^^^^^^^#",
+    		    "#       # ##########################",
+    			"#       #                          #",
+    			"#       #                          #",
+    			"##      #                          #",
+    			"#       #                          #",
+    			"#       #                          #",
+    			"#       #                          #",
+    			"#      ##                          #",
+    			"#       #                          #",
+    			"#       #                          #",
+    			"#       #                          #",
+    			"#@      #                         p#",
+    			"####################################",
+            ],
+            messages: [
+                {
+                    x: 20,
+                    y: 828,
+                    txt: "Woah! How do I\nget up?"
+                },
+            ]
+        },
+        {
+            bitmap: [
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                     ####        p#",
+    			"#                                ###",
+    			"#                                  #",
+    			"#          ####                    #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                      ####        #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                              #####",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#                       ####       #",
+    			"#                #                 #",
+    			"#                #####             #",
+    			"#                                  #",
+    			"#                                  #",
+    			"#               #######            #",
+    			"#     @                            #",
+    			"#     #####                        #",
+    			"#                                  #",
+    			"#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#",
+    			"####################################",
+            ],
+            messages: [
+                {
+                    x: 50,
+                    y: 623,
+                    txt: "How is there so much spikes?"
+                }
+            ]
+        },
+        {
+            bitmap: [
+    			"##########################################################################################################################################################################################################################################################################################",
+    			"#                                                                                                                                                                                                                                                                                       p#",
+    			"#                                                                                                                                                                                                                                                                                        #",
+    			"#@                                                                                                                                                                                                                                                                                       #",
+    			"##########################################################################################################################################################################################################################################################################################",
+            ],
+            messages: [
+                {
+                    x: 2015,
+                    y: -20,
+                    txt: "Um... whats going on?"
+                },
+                {
+                    x: 5564,
+                    y: -20,
+                    txt: "Finally!"
+                },
+            ]
+        },
+        {
+            bitmap: [
+                "",
+            ],
+            messages: []
+        }
+    ],
+    curLev = 0,
+    loadLev = true,
+    cam = {
+        x: 0,
+        y: 0,
+    },
+    blockSize = 20,
+    
+    img = null,
+    imgSize = 400,
+    imgRot = 0,
+    
+    Binary = (function() {
+        function B() {
+            this.x = Math.random() * 400;
+            this.y = Math.random() * 400;
+            this.speed = Math.random() * 2 + 2;
+            this.didget = Math.round(Math.random());
+        }
+        B.prototype = {
+            update: function() {
+                ctx.font = (this.speed * 4) + "px courier";
+                ctx.textAlign = "left";
+                ctx.textBaseline = "top";
+                ctx.fillStyle = "rgb(89, 189, 89)";
+                ctx.fillText(this.didget, this.x, this.y);
+                this.y += this.y < 450?this.speed:-450;
+            },
+        };
+        return B;
+    })(),
+    binarys = (function() {
+        var b = new Array();
+        for(var i = 0; i < 50; i ++) {
+            b.push(new Binary());
+        }
+        return b;
+    })(),
+    
+    glitch = function(amount) {
+        for(var i = 0; i < 400; i += 30) {
+            ctx.putImageData(ctx.getImageData(0, i, 400, 30), Math.random() * (amount - (-amount)) + (-amount), i + (Math.random() * (amount - (-amount) + -amount)));
+        }
+    },
+    
+    background = function() {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, 400, 400);
+        for(var i = 0; i < binarys.length; i ++) {
+            binarys[i].update();
+        }
+    },
+    
+    checkCollision = function(obj1, obj2) {
+        return obj1.pos.x + blockSize > obj2.pos.x &&
+            obj1.pos.x < obj2.pos.x + blockSize &&
+            obj1.pos.y + blockSize > obj2.pos.y &&
+            obj1.pos.y < obj2.pos.y + blockSize;
+    },
+    
+    TransitionParticle = (function() {
+        function TP(config) {
+            this.pos = {
+                x: config.x || 0,
+                y: config.y || 0,
+            };
+            this.vel = {
+                x: Math.random() * 4 - 2,
+                y: Math.random() * (-1 - (-7)) + -7,
+            };
+            this.mass = 30;
+            this.img = ctx.getImageData(this.pos.x, this.pos.y, 30, 30);
+        }
+        TP.prototype = {
+            update: function() {
+                ctx.save();
+                ctx.translate(this.pos.x, this.pos.y);
+                ctx.scale(this.mass / 30, this.mass / 30);
+                ctx.putImageData(this.img, 0, 0);
+                ctx.restore();
+                this.pos.x += this.vel.x;
+                this.pos.y += this.vel.y;
+                this.vel.y += 0.1;
+                this.mass -= 0.1;
+            },
+        };
+        return TP;
+    })(),
+    transitionParticles = [],
+    
+    Player = (function() {
+        function P() {
+            this.pos = {
+                x: 50,
+                y: 44,
+            };
+            this.vel = {
+                x: 0,
+                y: 0,
+            };
+            this.past = {
+                x: 0,
+                y: 0,
+            };
+        }
+        P.prototype = {
+            moveX: function() {
+                this.past.x = this.pos.x;
+                if((keys[37] || keys.d) && this.vel.x > -10) {
+                    this.vel.x -= 0.1;
+                } else if((keys[39] || keys.a) && this.vel.x < 10) {
+                    this.vel.x += 0.1;
+                } else {
+                    this.vel.x *= 0.9;
+                }
+                this.pos.x += this.vel.x;
+            },
+            moveY: function() {
+                this.past.y = this.pos.y;
+                if((keys[38] || keys.w) && this.vel.y === 0) {
+                    this.vel.y = -7;
+                }
+                this.vel.y += 0.3;
+                this.pos.y += this.vel.y;
+                if(this.pos.y > (levels[curLev].bitmap.length * blockSize) * 2 && curLev !== levels.length - 1) {
+                    imgSize = 400;
+                    imgRot = 0;
+                    img = ctx.getImageData(0, 0, 400, 400);
+                    scene = "lose";
+                }
+            },
+            display: function() {
+                ctx.fillStyle = "rgb(255, 255, 255)";
+                ctx.beginPath();
+                ctx.lineTo(this.pos.x + this.vel.x, this.pos.y);
+                ctx.lineTo((this.pos.x + this.vel.x) + blockSize, this.pos.y);
+                ctx.lineTo(this.pos.x + blockSize, this.pos.y + blockSize);
+                ctx.lineTo(this.pos.x, this.pos.y + blockSize);
+                ctx.fill();
+            },
+        };
+        return P;
+    })(),
+    player = new Player(),
+    
+    Block = (function() {
+        function B(config) {
+            this.pos = {
+                x: config.x || 0,
+                y: config.y || 0,
+            };
+        }
+        B.prototype = {
+            collideX: function(that) {
+                if(checkCollision(this, that)) {
+                    if(that.pos.x > this.pos.x) {
+                        that.pos.x = this.pos.x + blockSize;
+                    }
+                    if(that.pos.x < this.pos.x) {
+                        that.pos.x = this.pos.x - blockSize;
+                    }
+                    that.vel.x = 0;
+                }
+            },
+            collideY: function(that) {
+                if(checkCollision(this, that)) {
+                    if(that.pos.y > this.pos.y) {
+                        that.pos.y = this.pos.y;
+                        that.vel.y = 0.1;
+                    }
+                    if(that.pos.y < this.pos.y) {
+                        that.pos.y = this.pos.y - blockSize;
+                        that.vel.y = 0;
+                    }
+                }
+            },
+            display: function() {
+                ctx.save();
+                ctx.translate(this.pos.x, this.pos.y);
+                ctx.scale(blockSize / 400, blockSize / 400);
+                ctx.fillStyle = "rgb(30, 107, 30)";
+                ctx.fillRect(0, 0, 400, 400);
+                ctx.fillStyle = "rgba(255, 255, 255, " + 50 / 255 + ")";
+                ctx.beginPath();
+                ctx.lineTo(400, 0);
+                ctx.lineTo(0, 400);
+                ctx.lineTo(400, 400);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = "rgb(0, 0, 0)";
+                ctx.fillRect(100, 100, 200, 200);
+                ctx.restore();
+            },
+        };
+        return B;
+    })(),
+    blocks = [],
+    
+    Spike = (function() {
+        function S(config) {
+            this.pos = {
+                x: config.x || 0,
+                y: config.y || 0,
+            };
+            this.type = config.type || "spike-up";
+        }
+        S.prototype = {
+            collide: function(that) {
+                if(checkCollision(this, that)) {
+                    loadLev = true;
+                }
+            },
+            display: function() {},
+        };
+        return S;
+    })(),
+    
+    loadLevel = function() {
+        //clears the arrays
+        blocks = [];
+        //finds ''s in the current level
+        for(var i = 0; i < levels[curLev].bitmap.length; i ++) {
+            //finds stuff inside i (the ''s)
+            for(var j = 0; j < levels[curLev].bitmap[i].length; j ++) {
+                //finds stuff using i and j
+                switch(levels[curLev].bitmap[i][j]) {
+                    case '@':
+                        //sets the player location
+                        player.x = j * blockSize;
+                        player.y = i * blockSize;
+                        break;
+                    case '#':
+                        //adds a block in the blocks array
+                        blocks.push(new Block({
+                            x: j * blockSize,
+                            y: i * blockSize
+                        }));
+                        break;
+                }
+            }
+        }
+        player.yv = 0.1;
+        player.xv = 0;
+    },
+    
+    mouse = {
+        x: 0,
+        y: 0,
+        clicked: false,
+    },
+    keys = [];
+    loop = setInterval(function() {
+        try {
+            background();
+            ctx.save();
+            ctx.translate(200 + -player.pos.x, 200 + -player.pos.y);
+            player.display();
+            for(var i = 0; i < blocks.length; i ++) {
+                blocks[i].display();
+            }
+            player.moveX();
+            for(var i = 0; i < blocks.length; i ++) {
+                blocks[i].collideX(player);
+            }
+            player.moveY();
+            for(var i = 0; i < blocks.length; i ++) {
+                blocks[i].collideY(player);
+            }
+            if(loadLev) {
+                loadLevel();
+                loadLev = false;
+            }
+            if(Math.random() > 0.9) {
+                glitch(Math.random() * 50);
+            }
+            ctx.restore();
+            if(transitionParticles.length === 0) {
+                for(var i = 0; i < 400; i += 30) {
+                    for(var j = 0; j < 400; j += 30) {
+                        transitionParticles.push(new TransitionParticle({
+                            x: i,
+                            y: j
+                        }));
+                    }
+                }
+            }
+            for(var i = 0; i < transitionParticles.length; i ++) {
+                transitionParticles[i].update();
+            }
+            canvas.style.marginLeft = "calc(50% - " + canvas.width / 2 + "px)";
+            canvas.style.marginTop = window.innerHeight / 2 - (canvas.height / 2) + "px";
+        } catch(err) {
+            clearInterval(loop);
+            throw err;
+        }
+    }, 1000 / 60);
+
+canvas.addEventListener("click", function() {
+    mouse.clicked = true;
+});
+canvas.addEventListener("keydown", function(e) {
+    keys[e.keyCode] = true;
+    keys[e.key.toString()] = true;
+});
+canvas.addEventListener("keyup", function(e) {
+    keys[e.keyCode] = false;
+    keys[e.key.toString()] = false;
+});
+        </script>
+    </body>
+</html>
